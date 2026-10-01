@@ -3,8 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>VoltExpress · Pagos CSVE</title>
-<link rel="icon" href="data:,">
+<title>App de Pagos para Centros de Servicio · Uso Interno</title>
+<meta name="description" content="VoltExpress · App de Pagos para Centros de Servicio (CSVE) — uso interno.">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="512x512" href="favicon.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- Open Graph / WhatsApp / redes sociales -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="App de Pagos para Centros de Servicio · Uso Interno">
+<meta property="og:description" content="VoltExpress · captura de servicios y pago semanal a instaladores (CSVE).">
+<meta property="og:image" content="https://yonathanvj.github.io/pagos-voltexpress/og-image.png">
+<meta property="og:url" content="https://yonathanvj.github.io/pagos-voltexpress/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="App de Pagos para Centros de Servicio · Uso Interno">
+<meta name="twitter:image" content="https://yonathanvj.github.io/pagos-voltexpress/og-image.png">
 <style>
   :root{
     --navy:#0A1527;
@@ -291,6 +306,7 @@
     <button class="tab-btn active" data-tab="capturar">Capturar Servicio</button>
     <button class="tab-btn" data-tab="centros">Centros de Servicio</button>
     <button class="tab-btn" data-tab="resumen">Resumen Semanal</button>
+    <button class="tab-btn" data-tab="import">Importar Calendar</button>
   </div>
 
   <div class="container">
@@ -368,6 +384,28 @@
           <button class="btn btn-ghost btn-sm" id="week-today-r" type="button">Semana actual</button>
         </div>
         <div id="resumen-table-wrap" style="margin-top:14px;"></div>
+      </div>
+    </div>
+
+    <!-- ---------- TAB: IMPORTAR CALENDAR ---------- -->
+    <div class="tab-panel" id="tab-import">
+      <div class="card">
+        <div class="card-title" style="justify-content:space-between;display:flex;flex-wrap:wrap;gap:10px;">
+          <span>Candidatos importados de Google Calendar</span>
+          <span class="helper" style="margin:0;">Sugerencias automáticas &middot; revisa, ajusta el monto si hace falta y aprueba para que cuenten en el pago</span>
+        </div>
+        <div class="row">
+          <div class="week-nav">
+            <button class="icon-btn" id="week-prev-i" type="button">&#8249;</button>
+            <div class="week-label" id="week-label-i">—</div>
+            <button class="icon-btn" id="week-next-i" type="button">&#8250;</button>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="week-today-i" type="button">Semana actual</button>
+        </div>
+        <div id="import-table-wrap" style="margin-top:14px;"></div>
+        <div class="actions-bar">
+          <button class="btn btn-accent" id="btn-aprobar-import" type="button">&#10003; Aprobar seleccionados</button>
+        </div>
       </div>
     </div>
 
@@ -470,7 +508,7 @@ try {
    se guarda: vive solo en memoria del navegador.
    ============================================================ */
 const DEMO_CENTROS = [{"id": "CS001", "nombre": "Guadalajara", "ciudad": "GUADALAJARA", "responsable": "David López Flores", "telefono": "+52 33 1293 8960", "modo": "Equipo", "activo": true}, {"id": "CS002", "nombre": "Monterrey", "ciudad": "MONTERREY", "responsable": "Yonathan Velázquez Jiménez", "telefono": "+52 81 1690 6678", "modo": "Solo", "activo": true}, {"id": "CS003", "nombre": "CDMX - Enrique", "ciudad": "CDMX", "responsable": "Enrique Almaguer", "telefono": "+52 55 2885 2558", "modo": "Solo", "activo": true}, {"id": "CS004", "nombre": "Torreón", "ciudad": "TORREÓN", "responsable": "Carlos Andrés Juárez Villarreal", "telefono": "+52 871 177 1304", "modo": "Solo", "activo": true}, {"id": "CS005", "nombre": "San Luis Potosí", "ciudad": "SAN LUIS POTOSÍ", "responsable": "Luis Álvarez", "telefono": "+52 444 849 1920", "modo": "Solo", "activo": true}, {"id": "CS006", "nombre": "Saltillo", "ciudad": "SALTILLO", "responsable": "Germán Murguía", "telefono": "+52 844 195 9260", "modo": "Solo", "activo": true}, {"id": "CS007", "nombre": "Tepic", "ciudad": "TEPIC", "responsable": "Ricardo Flores Castello", "telefono": "+52 311 103 8430", "modo": "Solo", "activo": true}, {"id": "CS008", "nombre": "Puerto Vallarta", "ciudad": "PUERTO VALLARTA", "responsable": "Aldo Alonso Sepúlveda Ramos", "telefono": "+52 322 121 2170", "modo": "Solo", "activo": true}, {"id": "CS009", "nombre": "Mazatlán", "ciudad": "MAZATLÁN", "responsable": "Jaime Sánchez", "telefono": "+52 669 269 3192", "modo": "Solo", "activo": true}, {"id": "CS010", "nombre": "Tampico", "ciudad": "TAMPICO", "responsable": "José Eduardo Sandoval Rivera", "telefono": "+52 833 331 0283", "modo": "Solo", "activo": true}, {"id": "CS011", "nombre": "Reynosa", "ciudad": "REYNOSA", "responsable": "Juan Manuel Torres Espiricueto", "telefono": "+52 899 149 3866", "modo": "Solo", "activo": true}, {"id": "CS012", "nombre": "CDMX - Gonzalo", "ciudad": "CDMX", "responsable": "Gonzalo Rosas Ortiz", "telefono": "+52 56 6246 6785", "modo": "Solo", "activo": true}, {"id": "CS013", "nombre": "Queretaro", "ciudad": "QUERÉTARO", "responsable": "Pedro Eduardo Jiménez Estrada", "telefono": "524421130007", "modo": "Equipo", "activo": true}, {"id": "CS014", "nombre": "Monterrey - Felipe Olan", "ciudad": "MONTERREY", "responsable": "Felipe Olán", "telefono": null, "modo": "Solo·fijo", "activo": true}, {"id": "CS015", "nombre": "Monterrey - Victor", "ciudad": "MONTERREY", "responsable": "Victor Flores", "telefono": null, "modo": "Solo·fijo", "activo": true}, {"id": "CS016", "nombre": "Monterrey - ICSSA", "ciudad": "MONTERREY", "responsable": "Yonathan Velázquez Jiménez", "telefono": null, "modo": "Solo·fijo", "activo": true}, {"id": "CS017", "nombre": "La Paz", "ciudad": "LA PAZ", "responsable": "Luis Zamael Márquez Gonzalez", "telefono": "+52 612 168 8878", "modo": "Solo", "activo": true}, {"id": "CS018", "nombre": "Tijuana", "ciudad": "TIJUANA", "responsable": "Teresa Vazquez Silva", "telefono": "6646285775", "modo": "Solo", "activo": true}, {"id": "CS019", "nombre": "Los Cabos", "ciudad": "LOS CABOS", "responsable": "Edgar Aguilando Cruz", "telefono": "6241515886", "modo": "Solo", "activo": true}, {"id": "CS020", "nombre": "TAMPICO 2", "ciudad": "TAMPICO", "responsable": "José Fernando Rico Mercado", "telefono": "8332453275", "modo": "Solo", "activo": true}, {"id": "CS021", "nombre": "Colima", "ciudad": "COLIMA", "responsable": "Ramón Rodolfo Sánchez Rodríguez", "telefono": "+52 312 309 0815", "modo": "Solo", "activo": true}];
-const DEMO_CATALOGO = [{"id": "demo-1", "categoria": "Preparación 220", "concepto": "Instalación Aérea", "detalle": null, "zona": "General", "tipo": null, "precio": 1500, "orden": 10, "activo": true}, {"id": "demo-2", "categoria": "Preparación 220", "concepto": "Instalación Subterránea", "detalle": null, "zona": "General", "tipo": null, "precio": 2000, "orden": 20, "activo": true}, {"id": "demo-3", "categoria": "Preparación 220", "concepto": "Nuevo Medidor", "detalle": null, "zona": "General", "tipo": null, "precio": 1500, "orden": 30, "activo": true}, {"id": "demo-4", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 1500, "orden": 100, "activo": true}, {"id": "demo-5", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 1500, "orden": 101, "activo": true}, {"id": "demo-6", "categoria": "Instalación de Cargador", "concepto": "11 a 20 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 2000, "orden": 110, "activo": true}, {"id": "demo-7", "categoria": "Instalación de Cargador", "concepto": "11 a 20 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 2300, "orden": 111, "activo": true}, {"id": "demo-8", "categoria": "Instalación de Cargador", "concepto": "21 a 30 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 2500, "orden": 120, "activo": true}, {"id": "demo-9", "categoria": "Instalación de Cargador", "concepto": "21 a 30 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 2875, "orden": 121, "activo": true}, {"id": "demo-10", "categoria": "Instalación de Cargador", "concepto": "31 a 40 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 4000, "orden": 130, "activo": true}, {"id": "demo-11", "categoria": "Instalación de Cargador", "concepto": "31 a 40 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 4600, "orden": 131, "activo": true}, {"id": "demo-12", "categoria": "Instalación de Cargador", "concepto": "41 a 50 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 4500, "orden": 140, "activo": true}, {"id": "demo-13", "categoria": "Instalación de Cargador", "concepto": "41 a 50 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 5175, "orden": 141, "activo": true}, {"id": "demo-14", "categoria": "Instalación de Cargador", "concepto": "51 a 60 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 5000, "orden": 150, "activo": true}, {"id": "demo-15", "categoria": "Instalación de Cargador", "concepto": "51 a 60 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 5750, "orden": 151, "activo": true}, {"id": "demo-16", "categoria": "Instalación de Cargador", "concepto": "61 a 70 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 6000, "orden": 160, "activo": true}, {"id": "demo-17", "categoria": "Instalación de Cargador", "concepto": "61 a 70 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 6900, "orden": 161, "activo": true}, {"id": "demo-18", "categoria": "Instalación de Cargador", "concepto": "70 a 80 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 6500, "orden": 170, "activo": true}, {"id": "demo-19", "categoria": "Instalación de Cargador", "concepto": "70 a 80 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 7475, "orden": 171, "activo": true}, {"id": "demo-20", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 2500, "orden": 200, "activo": true}, {"id": "demo-21", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 2500, "orden": 201, "activo": true}, {"id": "demo-22", "categoria": "Instalación de Cargador", "concepto": "11 a 20 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 3000, "orden": 210, "activo": true}, {"id": "demo-23", "categoria": "Instalación de Cargador", "concepto": "11 a 20 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 3300, "orden": 211, "activo": true}, {"id": "demo-24", "categoria": "Instalación de Cargador", "concepto": "21 a 30 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 3500, "orden": 220, "activo": true}, {"id": "demo-25", "categoria": "Instalación de Cargador", "concepto": "21 a 30 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 3875, "orden": 221, "activo": true}, {"id": "demo-26", "categoria": "Instalación de Cargador", "concepto": "31 a 40 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 4800, "orden": 230, "activo": true}, {"id": "demo-27", "categoria": "Instalación de Cargador", "concepto": "31 a 40 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 5300, "orden": 231, "activo": true}, {"id": "demo-28", "categoria": "Instalación de Cargador", "concepto": "41 a 50 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 5500, "orden": 240, "activo": true}, {"id": "demo-29", "categoria": "Instalación de Cargador", "concepto": "41 a 50 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 6175, "orden": 241, "activo": true}, {"id": "demo-30", "categoria": "Instalación de Cargador", "concepto": "51 a 60 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 6000, "orden": 250, "activo": true}, {"id": "demo-31", "categoria": "Instalación de Cargador", "concepto": "51 a 60 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 6750, "orden": 251, "activo": true}, {"id": "demo-32", "categoria": "Instalación de Cargador", "concepto": "61 a 70 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 7000, "orden": 260, "activo": true}, {"id": "demo-33", "categoria": "Instalación de Cargador", "concepto": "61 a 70 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 7900, "orden": 261, "activo": true}, {"id": "demo-34", "categoria": "Instalación de Cargador", "concepto": "70 a 80 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 7500, "orden": 270, "activo": true}, {"id": "demo-35", "categoria": "Instalación de Cargador", "concepto": "70 a 80 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 8475, "orden": 271, "activo": true}, {"id": "demo-36", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "La Paz", "tipo": "Uso Rudo", "precio": 3000, "orden": 300, "activo": true}, {"id": "demo-37", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "La Paz", "tipo": "Conduit", "precio": 3000, "orden": 301, "activo": true}, {"id": "demo-38", "categoria": "Instalación de Cargador", "concepto": "Más de 10 Metros", "detalle": "Base $3,000 + $50 por metro adicional arriba de 10m — calcular y ajustar precio manualmente", "zona": "La Paz", "tipo": null, "precio": null, "orden": 310, "activo": true}, {"id": "demo-39", "categoria": "Instalaciones Adicionales", "concepto": "Pedestal sin Base de Concreto", "detalle": null, "zona": "General", "tipo": null, "precio": 500, "orden": 400, "activo": true}, {"id": "demo-40", "categoria": "Instalaciones Adicionales", "concepto": "Pedestal con Base de Concreto", "detalle": null, "zona": "General", "tipo": null, "precio": 1500, "orden": 410, "activo": true}, {"id": "demo-41", "categoria": "Instalaciones Adicionales", "concepto": "Instalación de Caja para Cargador", "detalle": null, "zona": "General", "tipo": null, "precio": 350, "orden": 420, "activo": true}, {"id": "demo-42", "categoria": "Instalaciones Adicionales", "concepto": "Instalación de Varilla para Tierra", "detalle": null, "zona": "General", "tipo": null, "precio": 400, "orden": 430, "activo": true}, {"id": "demo-43", "categoria": "Instalaciones Adicionales", "concepto": "Actualización", "detalle": null, "zona": "General", "tipo": null, "precio": 500, "orden": 440, "activo": true}, {"id": "demo-44", "categoria": "Instalaciones Adicionales", "concepto": "Levantamientos / Garantías / Revisión", "detalle": null, "zona": "General", "tipo": null, "precio": 250, "orden": 450, "activo": true}, {"id": "demo-45", "categoria": "Instalaciones Adicionales", "concepto": "Garantía Actualización", "detalle": "Al finalizar el servicio", "zona": "General", "tipo": null, "precio": 500, "orden": 460, "activo": true}, {"id": "demo-46", "categoria": "Instalaciones Adicionales", "concepto": "Mantenimiento a Cargador", "detalle": null, "zona": "General", "tipo": null, "precio": 800, "orden": 470, "activo": true}, {"id": "demo-47", "categoria": "Instalaciones Adicionales", "concepto": "Garantía no Imputable al Instalador", "detalle": null, "zona": "General", "tipo": null, "precio": 250, "orden": 480, "activo": true}, {"id": "demo-48", "categoria": "Instalaciones Adicionales", "concepto": "Desinstalación", "detalle": null, "zona": "General", "tipo": null, "precio": 500, "orden": 490, "activo": true}, {"id": "demo-49", "categoria": "Instalaciones Adicionales", "concepto": "Conexión", "detalle": null, "zona": "General", "tipo": null, "precio": 700, "orden": 500, "activo": true}, {"id": "demo-50", "categoria": "Foráneo", "concepto": "0 a 25 km", "detalle": null, "zona": "General", "tipo": null, "precio": 420, "orden": 600, "activo": true}, {"id": "demo-51", "categoria": "Foráneo", "concepto": "26 a 50 km", "detalle": null, "zona": "General", "tipo": null, "precio": 600, "orden": 610, "activo": true}, {"id": "demo-52", "categoria": "Foráneo", "concepto": "51 a 80 km", "detalle": null, "zona": "General", "tipo": null, "precio": 850, "orden": 620, "activo": true}, {"id": "demo-53", "categoria": "Foráneo", "concepto": "81 a 110 km", "detalle": null, "zona": "General", "tipo": null, "precio": 1100, "orden": 630, "activo": true}, {"id": "demo-54", "categoria": "Foráneo", "concepto": "111 a 140 km", "detalle": null, "zona": "General", "tipo": null, "precio": 1350, "orden": 640, "activo": true}, {"id": "demo-55", "categoria": "Foráneo", "concepto": "141 a 170 km", "detalle": null, "zona": "General", "tipo": null, "precio": 1600, "orden": 650, "activo": true}];
+const DEMO_CATALOGO = [{"id": "demo-1", "categoria": "Preparación 220", "concepto": "Instalación Aérea", "detalle": null, "zona": "General", "tipo": null, "precio": 1500, "orden": 10, "activo": true}, {"id": "demo-2", "categoria": "Preparación 220", "concepto": "Instalación Subterránea", "detalle": null, "zona": "General", "tipo": null, "precio": 2000, "orden": 20, "activo": true}, {"id": "demo-3", "categoria": "Preparación 220", "concepto": "Nuevo Medidor", "detalle": null, "zona": "General", "tipo": null, "precio": 1500, "orden": 30, "activo": true}, {"id": "demo-4", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 1500, "orden": 100, "activo": true}, {"id": "demo-5", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 1500, "orden": 101, "activo": true}, {"id": "demo-6", "categoria": "Instalación de Cargador", "concepto": "11 a 20 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 2000, "orden": 110, "activo": true}, {"id": "demo-7", "categoria": "Instalación de Cargador", "concepto": "11 a 20 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 2300, "orden": 111, "activo": true}, {"id": "demo-8", "categoria": "Instalación de Cargador", "concepto": "21 a 30 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 2500, "orden": 120, "activo": true}, {"id": "demo-9", "categoria": "Instalación de Cargador", "concepto": "21 a 30 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 2875, "orden": 121, "activo": true}, {"id": "demo-10", "categoria": "Instalación de Cargador", "concepto": "31 a 40 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 4000, "orden": 130, "activo": true}, {"id": "demo-11", "categoria": "Instalación de Cargador", "concepto": "31 a 40 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 4600, "orden": 131, "activo": true}, {"id": "demo-12", "categoria": "Instalación de Cargador", "concepto": "41 a 50 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 4500, "orden": 140, "activo": true}, {"id": "demo-13", "categoria": "Instalación de Cargador", "concepto": "41 a 50 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 5175, "orden": 141, "activo": true}, {"id": "demo-14", "categoria": "Instalación de Cargador", "concepto": "51 a 60 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 5000, "orden": 150, "activo": true}, {"id": "demo-15", "categoria": "Instalación de Cargador", "concepto": "51 a 60 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 5750, "orden": 151, "activo": true}, {"id": "demo-16", "categoria": "Instalación de Cargador", "concepto": "61 a 70 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 6000, "orden": 160, "activo": true}, {"id": "demo-17", "categoria": "Instalación de Cargador", "concepto": "61 a 70 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 6900, "orden": 161, "activo": true}, {"id": "demo-18", "categoria": "Instalación de Cargador", "concepto": "70 a 80 Metros", "detalle": null, "zona": "General", "tipo": "Uso Rudo", "precio": 6500, "orden": 170, "activo": true}, {"id": "demo-19", "categoria": "Instalación de Cargador", "concepto": "70 a 80 Metros", "detalle": null, "zona": "General", "tipo": "Conduit", "precio": 7475, "orden": 171, "activo": true}, {"id": "demo-20", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 2500, "orden": 200, "activo": true}, {"id": "demo-21", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 2500, "orden": 201, "activo": true}, {"id": "demo-22", "categoria": "Instalación de Cargador", "concepto": "11 a 20 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 3000, "orden": 210, "activo": true}, {"id": "demo-23", "categoria": "Instalación de Cargador", "concepto": "11 a 20 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 3300, "orden": 211, "activo": true}, {"id": "demo-24", "categoria": "Instalación de Cargador", "concepto": "21 a 30 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 3500, "orden": 220, "activo": true}, {"id": "demo-25", "categoria": "Instalación de Cargador", "concepto": "21 a 30 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 3875, "orden": 221, "activo": true}, {"id": "demo-26", "categoria": "Instalación de Cargador", "concepto": "31 a 40 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 4800, "orden": 230, "activo": true}, {"id": "demo-27", "categoria": "Instalación de Cargador", "concepto": "31 a 40 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 5300, "orden": 231, "activo": true}, {"id": "demo-28", "categoria": "Instalación de Cargador", "concepto": "41 a 50 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 5500, "orden": 240, "activo": true}, {"id": "demo-29", "categoria": "Instalación de Cargador", "concepto": "41 a 50 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 6175, "orden": 241, "activo": true}, {"id": "demo-30", "categoria": "Instalación de Cargador", "concepto": "51 a 60 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 6000, "orden": 250, "activo": true}, {"id": "demo-31", "categoria": "Instalación de Cargador", "concepto": "51 a 60 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 6750, "orden": 251, "activo": true}, {"id": "demo-32", "categoria": "Instalación de Cargador", "concepto": "61 a 70 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 7000, "orden": 260, "activo": true}, {"id": "demo-33", "categoria": "Instalación de Cargador", "concepto": "61 a 70 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 7900, "orden": 261, "activo": true}, {"id": "demo-34", "categoria": "Instalación de Cargador", "concepto": "70 a 80 Metros", "detalle": null, "zona": "CDMX", "tipo": "Uso Rudo", "precio": 7500, "orden": 270, "activo": true}, {"id": "demo-35", "categoria": "Instalación de Cargador", "concepto": "70 a 80 Metros", "detalle": null, "zona": "CDMX", "tipo": "Conduit", "precio": 8475, "orden": 271, "activo": true}, {"id": "demo-36", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "La Paz", "tipo": "Uso Rudo", "precio": 3000, "orden": 300, "activo": true}, {"id": "demo-37", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "La Paz", "tipo": "Conduit", "precio": 3000, "orden": 301, "activo": true}, {"id": "demo-38", "categoria": "Instalación de Cargador", "concepto": "Más de 10 Metros", "detalle": "Base $3,000 + $50 por metro adicional arriba de 10m — calcular y ajustar precio manualmente", "zona": "La Paz", "tipo": null, "precio": null, "orden": 310, "activo": true}, {"id": "demo-38b", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "Los Cabos", "tipo": "Uso Rudo", "precio": 3000, "orden": 320, "activo": true}, {"id": "demo-38c", "categoria": "Instalación de Cargador", "concepto": "1 a 10 Metros", "detalle": null, "zona": "Los Cabos", "tipo": "Conduit", "precio": 3000, "orden": 321, "activo": true}, {"id": "demo-38d", "categoria": "Instalación de Cargador", "concepto": "Más de 10 Metros", "detalle": "Base $3,000 + $50 por metro adicional arriba de 10m — calcular y ajustar precio manualmente", "zona": "Los Cabos", "tipo": null, "precio": null, "orden": 330, "activo": true}, {"id": "demo-39", "categoria": "Instalaciones Adicionales", "concepto": "Pedestal sin Base de Concreto", "detalle": null, "zona": "General", "tipo": null, "precio": 500, "orden": 400, "activo": true}, {"id": "demo-40", "categoria": "Instalaciones Adicionales", "concepto": "Pedestal con Base de Concreto", "detalle": null, "zona": "General", "tipo": null, "precio": 1500, "orden": 410, "activo": true}, {"id": "demo-41", "categoria": "Instalaciones Adicionales", "concepto": "Instalación de Caja para Cargador", "detalle": null, "zona": "General", "tipo": null, "precio": 350, "orden": 420, "activo": true}, {"id": "demo-42", "categoria": "Instalaciones Adicionales", "concepto": "Instalación de Varilla para Tierra", "detalle": null, "zona": "General", "tipo": null, "precio": 400, "orden": 430, "activo": true}, {"id": "demo-43", "categoria": "Instalaciones Adicionales", "concepto": "Actualización", "detalle": null, "zona": "General", "tipo": null, "precio": 500, "orden": 440, "activo": true}, {"id": "demo-44", "categoria": "Instalaciones Adicionales", "concepto": "Levantamientos / Garantías / Revisión", "detalle": null, "zona": "General", "tipo": null, "precio": 250, "orden": 450, "activo": true}, {"id": "demo-45", "categoria": "Instalaciones Adicionales", "concepto": "Garantía Actualización", "detalle": "Al finalizar el servicio", "zona": "General", "tipo": null, "precio": 500, "orden": 460, "activo": true}, {"id": "demo-46", "categoria": "Instalaciones Adicionales", "concepto": "Mantenimiento a Cargador", "detalle": null, "zona": "General", "tipo": null, "precio": 800, "orden": 470, "activo": true}, {"id": "demo-47", "categoria": "Instalaciones Adicionales", "concepto": "Garantía no Imputable al Instalador", "detalle": null, "zona": "General", "tipo": null, "precio": 250, "orden": 480, "activo": true}, {"id": "demo-48", "categoria": "Instalaciones Adicionales", "concepto": "Desinstalación", "detalle": null, "zona": "General", "tipo": null, "precio": 500, "orden": 490, "activo": true}, {"id": "demo-49", "categoria": "Instalaciones Adicionales", "concepto": "Conexión", "detalle": null, "zona": "General", "tipo": null, "precio": 700, "orden": 500, "activo": true}, {"id": "demo-50", "categoria": "Foráneo", "concepto": "0 a 25 km", "detalle": null, "zona": "General", "tipo": null, "precio": 420, "orden": 600, "activo": true}, {"id": "demo-51", "categoria": "Foráneo", "concepto": "26 a 50 km", "detalle": null, "zona": "General", "tipo": null, "precio": 600, "orden": 610, "activo": true}, {"id": "demo-52", "categoria": "Foráneo", "concepto": "51 a 80 km", "detalle": null, "zona": "General", "tipo": null, "precio": 850, "orden": 620, "activo": true}, {"id": "demo-53", "categoria": "Foráneo", "concepto": "81 a 110 km", "detalle": null, "zona": "General", "tipo": null, "precio": 1100, "orden": 630, "activo": true}, {"id": "demo-54", "categoria": "Foráneo", "concepto": "111 a 140 km", "detalle": null, "zona": "General", "tipo": null, "precio": 1350, "orden": 640, "activo": true}, {"id": "demo-55", "categoria": "Foráneo", "concepto": "141 a 170 km", "detalle": null, "zona": "General", "tipo": null, "precio": 1600, "orden": 650, "activo": true}];
 
 const state = {
   user: null,
@@ -482,8 +520,10 @@ const state = {
   registros: [],          // registros del centro+semana seleccionados (tab Capturar)
   resumenRegistros: [],   // registros de todos los centros para la semana (tab Resumen)
   centroId: null,
-  semanaInicio: null,     // Date (lunes) — semana activa en tab Capturar
+  semanaInicio: null,     // Date (viernes) — semana activa en tab Capturar
   semanaInicioResumen: null,
+  semanaInicioImport: null,
+  candidatosImport: [],   // candidatos de calendario_candidatos para la semana activa (tab Importar Calendar)
   categoriaActiva: "Preparación 220",
   editCentroId: null,     // si no es null, el modal de centro está en modo edición
 };
@@ -513,17 +553,17 @@ function toast(msg, type) {
   setTimeout(() => el.remove(), 3200);
 }
 
-/* ---- Fechas / semanas (semana = lunes a domingo) ---- */
+/* ---- Fechas / semanas (semana de pago = viernes a jueves; se paga el viernes siguiente) ---- */
 function toDateOnly(d) {
   const x = new Date(d);
   x.setHours(0, 0, 0, 0);
   return x;
 }
-function mondayOf(d) {
+function fridayOf(d) {
   const x = toDateOnly(d);
-  const day = x.getDay(); // 0=domingo..6=sábado
-  const diff = day === 0 ? -6 : 1 - day;
-  x.setDate(x.getDate() + diff);
+  const day = x.getDay(); // 0=domingo..6=sábado; viernes=5
+  const diff = (day - 5 + 7) % 7; // días desde el viernes de esta semana (0 si hoy ya es viernes)
+  x.setDate(x.getDate() - diff);
   return x;
 }
 function addDays(d, n) {
@@ -541,14 +581,19 @@ function fmtDateShort(d) {
   return x.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit" });
 }
 const MESES_ABR = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-function fmtWeekLabel(mon) {
-  const sun = addDays(mon, 6);
-  const sameMonth = mon.getMonth() === sun.getMonth();
-  const y = sun.getFullYear();
-  if (sameMonth) {
-    return `${mon.getDate()}–${sun.getDate()} ${MESES_ABR[mon.getMonth()]} ${y}`;
-  }
-  return `${mon.getDate()} ${MESES_ABR[mon.getMonth()]} – ${sun.getDate()} ${MESES_ABR[sun.getMonth()]} ${y}`;
+function fechaPagoDe(viernesInicio) {
+  return addDays(viernesInicio, 7);
+}
+function fmtWeekLabel(viernesInicio) {
+  const jueves = addDays(viernesInicio, 6);
+  const sameMonth = viernesInicio.getMonth() === jueves.getMonth();
+  const y = jueves.getFullYear();
+  const periodo = sameMonth
+    ? `${viernesInicio.getDate()}–${jueves.getDate()} ${MESES_ABR[viernesInicio.getMonth()]} ${y}`
+    : `${viernesInicio.getDate()} ${MESES_ABR[viernesInicio.getMonth()]} – ${jueves.getDate()} ${MESES_ABR[jueves.getMonth()]} ${y}`;
+  const pago = fechaPagoDe(viernesInicio);
+  const pagoTxt = `${pago.getDate()} ${MESES_ABR[pago.getMonth()]}${pago.getFullYear() !== y ? " " + pago.getFullYear() : ""}`;
+  return `${periodo} · Se paga: vie ${pagoTxt}`;
 }
 function isoWeekNumber(d) {
   const date = toDateOnly(d);
@@ -556,9 +601,9 @@ function isoWeekNumber(d) {
   const yearStart = new Date(date.getFullYear(), 0, 1);
   return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
 }
-function folioFor(centroId, mon) {
-  const y = mon.getFullYear();
-  const w = String(isoWeekNumber(mon)).padStart(2, "0");
+function folioFor(centroId, viernesInicio) {
+  const y = viernesInicio.getFullYear();
+  const w = String(isoWeekNumber(viernesInicio)).padStart(2, "0");
   return `CSVE-${y}-W${w}-${centroId}`;
 }
 
@@ -566,6 +611,7 @@ function zonaForCiudad(ciudad) {
   if (!ciudad) return "General";
   const c = ciudad.toUpperCase();
   if (c.includes("CDMX")) return "CDMX";
+  if (c.includes("LOS CABOS")) return "Los Cabos";
   if (c.includes("LA PAZ")) return "La Paz";
   return "General";
 }
@@ -704,11 +750,13 @@ async function bootData() {
   await Promise.all([loadCentros(), loadCatalogo()]);
   renderCentroSelect();
   renderCentrosTable();
-  if (!state.semanaInicio) state.semanaInicio = mondayOf(new Date());
-  if (!state.semanaInicioResumen) state.semanaInicioResumen = mondayOf(new Date());
+  if (!state.semanaInicio) state.semanaInicio = fridayOf(new Date());
+  if (!state.semanaInicioResumen) state.semanaInicioResumen = fridayOf(new Date());
+  if (!state.semanaInicioImport) state.semanaInicioImport = fridayOf(new Date());
   if (!state.centroId && state.centros.length) state.centroId = state.centros[0].id;
   updateWeekLabel();
   updateWeekLabelResumen();
+  updateWeekLabelImport();
   await refreshCapturaTab();
   await refreshResumenTab();
 }
@@ -727,6 +775,7 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     if (btn.dataset.tab === "resumen") await refreshResumenTab();
     if (btn.dataset.tab === "capturar") await refreshCapturaTab();
     if (btn.dataset.tab === "centros") renderCentrosTable();
+    if (btn.dataset.tab === "import") await refreshImportTab();
   });
 });
 
@@ -787,7 +836,7 @@ document.getElementById("week-next").addEventListener("click", async () => {
   await refreshCapturaTab();
 });
 document.getElementById("week-today").addEventListener("click", async () => {
-  state.semanaInicio = mondayOf(new Date());
+  state.semanaInicio = fridayOf(new Date());
   updateWeekLabel();
   await refreshCapturaTab();
 });
@@ -807,9 +856,29 @@ document.getElementById("week-next-r").addEventListener("click", async () => {
   await refreshResumenTab();
 });
 document.getElementById("week-today-r").addEventListener("click", async () => {
-  state.semanaInicioResumen = mondayOf(new Date());
+  state.semanaInicioResumen = fridayOf(new Date());
   updateWeekLabelResumen();
   await refreshResumenTab();
+});
+
+/* ---- misma navegación para el tab Importar Calendar ---- */
+function updateWeekLabelImport() {
+  document.getElementById("week-label-i").textContent = fmtWeekLabel(state.semanaInicioImport);
+}
+document.getElementById("week-prev-i").addEventListener("click", async () => {
+  state.semanaInicioImport = addDays(state.semanaInicioImport, -7);
+  updateWeekLabelImport();
+  await refreshImportTab();
+});
+document.getElementById("week-next-i").addEventListener("click", async () => {
+  state.semanaInicioImport = addDays(state.semanaInicioImport, 7);
+  updateWeekLabelImport();
+  await refreshImportTab();
+});
+document.getElementById("week-today-i").addEventListener("click", async () => {
+  state.semanaInicioImport = fridayOf(new Date());
+  updateWeekLabelImport();
+  await refreshImportTab();
 });
 
 async function refreshCapturaTab() {
@@ -828,6 +897,123 @@ async function refreshResumenTab() {
   await loadResumenSemana();
   renderResumenTable();
 }
+
+/* ============================================================
+   Importar Calendar — candidatos sugeridos (tabla calendario_candidatos)
+   ============================================================ */
+async function loadCandidatosImport() {
+  if (state.demoMode) { state.candidatosImport = []; return; }
+  if (!state.semanaInicioImport) { state.candidatosImport = []; return; }
+  const { data, error } = await sb
+    .from("calendario_candidatos")
+    .select("*")
+    .eq("semana_inicio", fmtDateISO(state.semanaInicioImport))
+    .order("centro_servicio_id", { ascending: true })
+    .order("fecha", { ascending: true });
+  if (error) { toast("Error cargando candidatos de Calendar: " + error.message, "err"); return; }
+  state.candidatosImport = data || [];
+}
+
+async function refreshImportTab() {
+  await loadCandidatosImport();
+  renderImportTable();
+}
+
+function renderImportTable() {
+  const wrap = document.getElementById("import-table-wrap");
+  if (state.demoMode) {
+    wrap.innerHTML = `<div class="helper">El import de Calendar no aplica en modo demo — usa la cuenta real para ver candidatos sugeridos.</div>`;
+    return;
+  }
+  const rows = state.candidatosImport;
+  if (!rows.length) {
+    wrap.innerHTML = `<div class="helper">No hay candidatos importados de Calendar para esta semana todavía.</div>`;
+    return;
+  }
+  wrap.innerHTML = `
+    <table class="data">
+      <thead>
+        <tr>
+          <th style="width:26px;"></th>
+          <th>Centro</th>
+          <th>Fecha</th>
+          <th>Cliente / Tipo</th>
+          <th>Concepto sugerido</th>
+          <th class="center" style="width:70px;">Cant.</th>
+          <th class="right" style="width:110px;">Precio</th>
+          <th>Revisar</th>
+          <th class="center">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((r) => {
+          const c = centroById(r.centro_servicio_id);
+          const yaAprobado = r.estado !== "pendiente";
+          return `<tr data-row="${escHtml(r.id)}" style="${yaAprobado ? "opacity:.55;" : ""}">
+            <td><input type="checkbox" class="imp-chk" data-id="${escHtml(r.id)}" ${r.incluido ? "checked" : ""} ${yaAprobado ? "disabled" : ""}></td>
+            <td>${c ? escHtml(c.id + " · " + c.nombre) : `<span style="color:var(--danger,#c0392b);">${escHtml(r.centro_label_evento || "Sin centro")}</span>`}</td>
+            <td>${fmtDateShort(r.fecha)}</td>
+            <td><b>${escHtml(r.cliente_nombre || "—")}</b><br><span class="helper" style="margin:0;">${escHtml(r.tipo_evento)}</span></td>
+            <td><input class="f-input imp-concepto" data-id="${escHtml(r.id)}" value="${escHtml(r.concepto_sugerido || "")}" placeholder="Definir concepto" ${yaAprobado ? "disabled" : ""}></td>
+            <td><input class="f-input imp-cant" type="number" min="0.01" step="0.01" data-id="${escHtml(r.id)}" value="${escHtml(r.cantidad_sugerida)}" ${yaAprobado ? "disabled" : ""}></td>
+            <td><input class="f-input imp-precio" type="number" min="0" step="0.01" data-id="${escHtml(r.id)}" value="${escHtml(r.precio_sugerido == null ? "" : r.precio_sugerido)}" placeholder="0.00" ${yaAprobado ? "disabled" : ""}></td>
+            <td style="max-width:260px;">${r.necesita_revision ? `<span class="helper" style="margin:0;color:#B45309;">&#9888; ${escHtml(r.motivo_revision || "Revisar antes de aprobar")}</span>` : ""}</td>
+            <td class="center">${yaAprobado ? `<span class="helper" style="margin:0;">${escHtml(r.estado)}</span>` : ""}</td>
+          </tr>`;
+        }).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+document.getElementById("btn-aprobar-import").addEventListener("click", async () => {
+  if (state.demoMode) { toast("No aplica en modo demo.", "err"); return; }
+  const pendientes = state.candidatosImport.filter((r) => r.estado === "pendiente");
+  const aAprobar = [];
+  for (const r of pendientes) {
+    const chk = document.querySelector(`.imp-chk[data-id="${r.id}"]`);
+    if (!chk || !chk.checked) continue;
+    const concepto = document.querySelector(`.imp-concepto[data-id="${r.id}"]`).value.trim();
+    const cantidad = parseFloat(document.querySelector(`.imp-cant[data-id="${r.id}"]`).value);
+    const precio = parseFloat(document.querySelector(`.imp-precio[data-id="${r.id}"]`).value);
+    if (!r.centro_servicio_id) { toast(`"${r.cliente_nombre}" no tiene centro asignado — corrígelo en Supabase (tabla calendario_candidatos) antes de aprobar.`, "err"); continue; }
+    if (!concepto) { toast(`Falta el concepto de "${r.cliente_nombre}".`, "err"); continue; }
+    if (isNaN(cantidad) || cantidad <= 0) { toast(`Cantidad inválida para "${r.cliente_nombre}".`, "err"); continue; }
+    if (isNaN(precio) || precio < 0) { toast(`Precio inválido para "${r.cliente_nombre}".`, "err"); continue; }
+    aAprobar.push({ candidato: r, concepto, cantidad, precio });
+  }
+  if (!aAprobar.length) { toast("No hay candidatos seleccionados y listos para aprobar.", "err"); return; }
+
+  let ok = 0, fail = 0;
+  for (const item of aAprobar) {
+    const r = item.candidato;
+    const { data: inserted, error: insErr } = await sb.from("registros_servicio").insert({
+      centro_servicio_id: r.centro_servicio_id,
+      fecha: r.fecha,
+      semana_inicio: r.semana_inicio,
+      categoria: r.categoria_sugerida || "Otro",
+      concepto: item.concepto,
+      detalle: r.detalle_sugerido || null,
+      cantidad: item.cantidad,
+      precio_unitario: item.precio,
+      es_otro: !r.categoria_sugerida,
+      creado_por: state.user ? state.user.email : null,
+      origen: "calendar_import",
+      calendar_event_id: r.calendar_event_id,
+    }).select().single();
+    if (insErr) { fail++; toast(`No se pudo aprobar "${r.cliente_nombre}": ` + insErr.message, "err"); continue; }
+    const { error: updErr } = await sb.from("calendario_candidatos").update({
+      estado: "aprobado",
+      registro_servicio_id: inserted.id,
+      revisado_por: state.user ? state.user.email : null,
+      revisado_en: new Date().toISOString(),
+    }).eq("id", r.id);
+    if (updErr) { console.warn("No se pudo marcar candidato como aprobado:", updErr); }
+    ok++;
+  }
+  toast(`${ok} servicio(s) aprobado(s) y agregado(s) al pago.` + (fail ? ` ${fail} con error.` : ""), fail ? "err" : "ok");
+  await refreshImportTab();
+});
 
 
 /* ============================================================
@@ -902,6 +1088,9 @@ function renderCategoriaBody() {
       tipoSel.innerHTML = opciones
         .map((r) => `<option value="${r.id}">${escHtml(r.tipo || "Único")}${r.precio == null ? " — precio manual" : " — " + money(r.precio)}</option>`)
         .join("");
+      // Default: Conduit (se evita Uso Rudo salvo que el usuario lo elija manualmente)
+      const conduitOpt = opciones.find((r) => r.tipo === "Conduit");
+      if (conduitOpt) tipoSel.value = conduitOpt.id;
       updateCargadorForm();
     }
     function updateCargadorForm() {
